@@ -1,5 +1,10 @@
 import {
   createDesktopClient,
+  createTauriDesktopCapability,
+  createTauriFileCapability,
+  createTauriKeyValueStore,
+  createTauriSecureStorage,
+  createTauriSessionStore,
   type AsyncKeyValueStore,
   type DesktopCapability,
   type DesktopClient,
@@ -9,7 +14,15 @@ import {
   type KeyValueStore,
   type SessionStore
 } from "@desktop-foundation/bridge";
+import { invoke } from "@tauri-apps/api/core";
 import { demoUser, orders, type DemoUser } from "./data";
+
+const product = "demo-product";
+const apiBaseURL = "https://api.foundation-demo.local";
+
+function isTauriRuntime() {
+  return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+}
 
 function memoryStore(initialValues: Record<string, unknown> = {}): KeyValueStore {
   const values = new Map<string, unknown>(Object.entries(initialValues));
@@ -60,12 +73,8 @@ function demoTransport(): HttpTransport {
         if (!payload.account || !payload.password) throw new Error("Account and password are required");
         return { token: "demo-token", remember: payload.remember, user: demoUser } as T;
       }
-      if (request.url.endsWith("/me")) {
-        return demoUser as T;
-      }
-      if (request.url.endsWith("/orders")) {
-        return { rows: orders, total: orders.length } as T;
-      }
+      if (request.url.endsWith("/me")) return demoUser as T;
+      if (request.url.endsWith("/orders")) return { rows: orders, total: orders.length } as T;
       return { ok: true, method: request.method, url: request.url, requestId: request.requestId } as T;
     }
   };
@@ -123,10 +132,30 @@ function demoFileCapability(pushLog: (value: string) => void): FileCapability {
   };
 }
 
-export function createDemoProductClient(pushLog: (value: string) => void): DesktopClient {
+export async function createDemoProductClient(pushLog: (value: string) => void): Promise<DesktopClient> {
+  if (isTauriRuntime()) {
+    const session = await createTauriSessionStore(invoke, product);
+    return createDesktopClient({
+      product,
+      apiBaseURL,
+      session,
+      storage: createTauriKeyValueStore(invoke, product, "user", { "orders.density": "default" }),
+      secureStorage: createTauriSecureStorage(invoke, product),
+      transport: demoTransport(),
+      desktop: createTauriDesktopCapability(invoke),
+      files: createTauriFileCapability(invoke, product),
+      security: {
+        allowedRequestOrigins: ["api.foundation-demo.local"],
+        allowedExternalOrigins: ["github.com", "docs.example.com"],
+        allowedExternalSchemes: ["https"],
+        allowedDownloadDirectories: ["/tmp"]
+      }
+    });
+  }
+
   return createDesktopClient({
-    product: "demo-product",
-    apiBaseURL: "https://api.foundation-demo.local",
+    product,
+    apiBaseURL,
     session: demoSessionStore(),
     storage: memoryStore({ "orders.density": "default" }),
     secureStorage: memorySecureStore(),

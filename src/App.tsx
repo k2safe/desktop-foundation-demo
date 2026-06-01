@@ -1,5 +1,5 @@
 import "@desktop-foundation/ui-react/styles.css";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AuthGuard, DebugPanel, DesktopAppShell, DesktopLoginPage, useSession } from "@desktop-foundation/app-shell";
 import { Badge, Button, CommandPalette, DesktopLayout, LoadingBlock, type CommandPaletteItem, type DesktopMenuItem } from "@desktop-foundation/ui-react";
 import type { DesktopClient } from "@desktop-foundation/bridge";
@@ -51,7 +51,7 @@ function ProductWorkspace({ client, logs }: ProductWorkspaceProps) {
         user={{ name: session.user?.name ?? demoUser.name, role: session.user?.role ?? demoUser.role }}
         topbarRight={
           <>
-            <Badge tone="success">Demo</Badge>
+            <Badge tone="success">Desktop</Badge>
             <Button variant="outline" size="sm" onClick={() => setPaletteOpen(true)}>
               命令
             </Button>
@@ -77,20 +77,44 @@ function ProductWorkspace({ client, logs }: ProductWorkspaceProps) {
         onSelect={(item) => void handleCommand(item)}
         onClose={() => setPaletteOpen(false)}
       />
-      <DebugPanel open={debugOpen} onClose={() => setDebugOpen(false)} appVersion="0.1.0" environment="demo-product" />
+      <DebugPanel open={debugOpen} onClose={() => setDebugOpen(false)} appVersion="0.1.0" environment="desktop-demo" />
     </>
   );
 }
 
 export function App() {
   const [logs, setLogs] = useState<string[]>([]);
-  const client = useMemo(
-    () =>
-      createDemoProductClient((value) => {
-        setLogs((current) => [`${new Date().toISOString()} ${value}`, ...current].slice(0, 10));
-      }),
+  const [client, setClient] = useState<DesktopClient | null>(null);
+  const [initError, setInitError] = useState<Error | null>(null);
+
+  const pushLog = useMemo(
+    () => (value: string) => {
+      setLogs((current) => [`${new Date().toISOString()} ${value}`, ...current].slice(0, 10));
+    },
     []
   );
+
+  useEffect(() => {
+    let mounted = true;
+    void createDemoProductClient(pushLog)
+      .then((nextClient) => {
+        if (mounted) setClient(nextClient);
+      })
+      .catch((error) => {
+        if (mounted) setInitError(error instanceof Error ? error : new Error("Failed to initialize desktop client"));
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [pushLog]);
+
+  if (initError) {
+    return <div style={{ padding: 24 }}>Failed to initialize demo: {initError.message}</div>;
+  }
+
+  if (!client) {
+    return <div style={{ padding: 24 }}>Loading desktop foundation demo...</div>;
+  }
 
   return (
     <DesktopAppShell
@@ -105,10 +129,10 @@ export function App() {
         fallback={
           <DesktopLoginPage
             brand={{ name: "Foundation Demo" }}
-            title="登录 DEMO 产品"
+            title="登录桌面 DEMO"
             subtitle="账号和密码任意填写，用来演示 app-shell 的登录与 session 流程。"
-            visualTitle="Clean foundation, product-owned business."
-            visualDescription="底座提供壳、组件、主题、客户端和桌面能力；产品只保留业务页面。"
+            visualTitle="Desktop-first foundation."
+            visualDescription="Tauri 环境走 Rust core，本地文件、通知、窗口和安全存储由底座统一接管。"
             submitLabel="进入 DEMO"
             login={{ login: loginDemoUser, defaultPayload: { account: "demo", password: "demo", remember: true } }}
           />
