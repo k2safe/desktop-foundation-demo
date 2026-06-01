@@ -1,7 +1,7 @@
 import "@desktop-foundation/ui-react/styles.css";
 import { useEffect, useMemo, useState } from "react";
 import { AuthGuard, DebugPanel, DesktopAppShell, DesktopLoginPage, useSession } from "@desktop-foundation/app-shell";
-import { Badge, Button, CommandPalette, DesktopLayout, LoadingBlock, type CommandPaletteItem, type DesktopMenuItem } from "@desktop-foundation/ui-react";
+import { Badge, Button, CommandPalette, DesktopLayout, LoadingBlock, SearchInput, type CommandPaletteItem, type DesktopMenuItem } from "@desktop-foundation/ui-react";
 import type { DesktopClient } from "@desktop-foundation/bridge";
 import { createDemoProductClient, loginDemoUser } from "./client";
 import { createMenus, demoUser, type DemoScreen } from "./data";
@@ -49,6 +49,7 @@ function ProductWorkspace({ client, logs }: ProductWorkspaceProps) {
         brand={{ name: "Foundation Demo" }}
         menus={createMenus(screen)}
         user={{ name: session.user?.name ?? demoUser.name, role: session.user?.role ?? demoUser.role }}
+        topbarLeft={<SearchInput placeholder="全局搜索订单 / 商户 / 配置" />}
         topbarRight={
           <>
             <Badge tone="success">Desktop</Badge>

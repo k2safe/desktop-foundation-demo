@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button, DataTable, DateRangePicker, DetailDrawer, Input, SearchInput, Select, useTablePreferences } from "@desktop-foundation/ui-react";
+import { useMemo, useState } from "react";
+import { Button, DataTable, DateRangePicker, DetailDrawer, Input, SearchInput, Select, StatusTag, useTablePreferences } from "@desktop-foundation/ui-react";
 import type { DesktopClient } from "@desktop-foundation/bridge";
 import { orderColumns, orders, type OrderRow } from "../data";
 
@@ -8,7 +8,10 @@ export interface OrdersProps {
 }
 
 export function Orders({ client }: OrdersProps) {
-  const [range, setRange] = useState({});
+  const [keyword, setKeyword] = useState("");
+  const [merchant, setMerchant] = useState("");
+  const [status, setStatus] = useState("");
+  const [range, setRange] = useState<{ start?: string; end?: string }>({});
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [selectedRow, setSelectedRow] = useState<OrderRow | null>(null);
   const { visibleColumns, sort, density, setSort, setDensity } = useTablePreferences({
@@ -16,6 +19,20 @@ export function Orders({ client }: OrdersProps) {
     columns: orderColumns,
     defaultSort: { key: "createdAt", direction: "desc" }
   });
+  const filteredOrders = useMemo(() => {
+    const normalizedKeyword = keyword.trim().toLowerCase();
+    const normalizedMerchant = merchant.trim().toLowerCase();
+
+    return orders.filter((order) => {
+      const matchesKeyword = normalizedKeyword ? `${order.id} ${order.merchant} ${order.channel}`.toLowerCase().includes(normalizedKeyword) : true;
+      const matchesMerchant = normalizedMerchant ? order.merchant.toLowerCase().includes(normalizedMerchant) : true;
+      const matchesStatus = status ? order.status === status : true;
+      const orderDate = order.createdAt.slice(0, 10);
+      const matchesStart = range.start ? orderDate >= range.start : true;
+      const matchesEnd = range.end ? orderDate <= range.end : true;
+      return matchesKeyword && matchesMerchant && matchesStatus && matchesStart && matchesEnd;
+    });
+  }, [keyword, merchant, range.end, range.start, status]);
 
   return (
     <>
@@ -23,7 +40,7 @@ export function Orders({ client }: OrdersProps) {
         title="订单中心"
         description="产品项目只负责业务字段和交互，表格能力来自底座组件。"
         columns={visibleColumns}
-        rows={orders}
+        rows={filteredOrders}
         rowKey="id"
         selectable
         selectedRowKeys={selectedRowKeys}
@@ -35,9 +52,10 @@ export function Orders({ client }: OrdersProps) {
         onRowClick={(row) => setSelectedRow(row)}
         filters={
           <>
-            <SearchInput placeholder="搜索订单号" />
-            <Input placeholder="商户名称" />
+            <SearchInput value={keyword} placeholder="搜索订单号" onChange={(event) => setKeyword(event.target.value)} />
+            <Input value={merchant} placeholder="商户名称" onChange={(event) => setMerchant(event.target.value)} />
             <Select
+              value={status}
               placeholder="状态"
               options={[
                 { value: "success", label: "成功" },
@@ -45,13 +63,15 @@ export function Orders({ client }: OrdersProps) {
                 { value: "warning", label: "需复核" },
                 { value: "danger", label: "失败" }
               ]}
+              onChange={(event) => setStatus(event.target.value)}
             />
-            <DateRangePicker value={range} onChange={setRange} />
+            <DateRangePicker value={range} applyLabel="确定" clearLabel="清空" onChange={setRange} />
           </>
         }
         actions={
           <Select
             value={density}
+            fullWidth={false}
             options={[
               { value: "compact", label: "紧凑" },
               { value: "default", label: "默认" },
@@ -70,7 +90,7 @@ export function Orders({ client }: OrdersProps) {
             </Button>
           </>
         }
-        pagination={{ page: 1, pageSize: 10, total: orders.length, onPageChange: () => undefined }}
+        pagination={{ page: 1, pageSize: 10, total: filteredOrders.length, onPageChange: () => undefined }}
       />
       <DetailDrawer
         open={Boolean(selectedRow)}
@@ -78,7 +98,7 @@ export function Orders({ client }: OrdersProps) {
         subtitle={selectedRow?.id}
         rows={[
           { label: "渠道", value: selectedRow?.channel },
-          { label: "状态", value: selectedRow?.status },
+          { label: "状态", value: selectedRow ? <StatusTag status={selectedRow.status} /> : null },
           { label: "金额", value: selectedRow ? `$${selectedRow.amount.toFixed(2)} ${selectedRow.currency}` : null },
           { label: "创建时间", value: selectedRow?.createdAt }
         ]}
