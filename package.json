@@ -1,0 +1,35 @@
+{
+  "name": "desktop-foundation-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "type-check": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@desktop-foundation/app-shell": "0.1.0",
+    "@desktop-foundation/bridge": "0.1.0",
+    "@desktop-foundation/theme-presets": "0.1.0",
+    "@desktop-foundation/ui-react": "0.1.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "vite": "^7.1.0",
+    "typescript": "~5.8.2",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "@desktop-foundation/app-shell": "link:../desktop-foundation/packages/desktop-app-shell",
+      "@desktop-foundation/bridge": "link:../desktop-foundation/packages/desktop-bridge",
+      "@desktop-foundation/theme-presets": "link:../desktop-foundation/packages/theme-presets",
+      "@desktop-foundation/ui-react": "link:../desktop-foundation/packages/desktop-ui-react"
+    }
+  }
+}
