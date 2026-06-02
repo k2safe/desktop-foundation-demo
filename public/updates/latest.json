@@ -1,0 +1,19 @@
+{
+  "version": "0.1.1",
+  "channel": "stable",
+  "notes": "Local demo update fixture generated for the real manifest adapter. Replace this URL with GitHub Releases latest.json in product builds.",
+  "pubDate": "2026-06-02T00:00:00.000Z",
+  "releasePageUrl": "https://github.com/k2safe/desktop-foundation-demo/releases",
+  "downloadUrl": "./updates/desktop-foundation-demo-0.1.1-macos.zip",
+  "sha256": "c01c9ad9a198587e7eb58c5d5c792b0050dd8c20e8f5a74a84e66cb655a7b994",
+  "size": 158,
+  "mandatory": false,
+  "metadata": {
+    "productName": "Desktop Foundation Demo",
+    "artifactName": "desktop-foundation-demo-0.1.1-macos.zip",
+    "platform": "macos",
+    "sizeBytes": 158,
+    "sha256": "c01c9ad9a198587e7eb58c5d5c792b0050dd8c20e8f5a74a84e66cb655a7b994",
+    "generatedBy": "desktop-foundation-demo-local-fixture"
+  }
+}
