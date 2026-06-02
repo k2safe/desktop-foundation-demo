@@ -24,6 +24,8 @@ import { Orders } from "./screens/Orders";
 import { Settings } from "./screens/Settings";
 import { createDemoProductTemplate, defaultThemeTemplateId, themeTemplateOptions, type ThemeTemplateId } from "./theme";
 
+const appBrand = "Commerce Ops";
+
 interface ProductWorkspaceProps {
   client: DesktopClient;
   logs: string[];
@@ -54,7 +56,7 @@ function ProductWorkspace({ client, logs, themeTemplateId, layoutVariant, onThem
 
   const commands: CommandPaletteItem[] = [
     { id: "dashboard", label: "打开工作台", group: "导航" },
-    { id: "orders", label: "打开订单中心", group: "导航" },
+    { id: "orders", label: "打开商城订单", group: "导航" },
     { id: "settings", label: "打开底座设置", group: "导航" },
     { id: "notify", label: "发送测试通知", group: "桌面能力" },
     { id: "export", label: "导出订单 JSON", group: "文件能力" }
@@ -68,7 +70,7 @@ function ProductWorkspace({ client, logs, themeTemplateId, layoutVariant, onThem
 
   async function handleCommand(item: CommandPaletteItem) {
     if (item.id === "dashboard" || item.id === "orders" || item.id === "settings") setScreen(item.id);
-    if (item.id === "notify") await client.desktop.notify({ title: "Foundation demo", body: "Command palette works." });
+    if (item.id === "notify") await client.desktop.notify({ title: "Commerce demo", body: "Command palette works." });
     if (item.id === "export") await client.files.exportJson("orders.json", [], { directory: "/tmp" });
     setPaletteOpen(false);
   }
@@ -87,7 +89,7 @@ function ProductWorkspace({ client, logs, themeTemplateId, layoutVariant, onThem
     <>
       <DesktopLayout
         variant={layoutVariant}
-        brand={{ name: "Foundation Demo" }}
+        brand={{ name: appBrand }}
         menus={createMenus(screen)}
         user={{ name: profile.name, account: profile.account, role: profile.role }}
         topbarLeft={<SearchInput placeholder="全局搜索订单 / 商户 / 配置" />}
@@ -146,8 +148,8 @@ function ProductWorkspace({ client, logs, themeTemplateId, layoutVariant, onThem
           <div className="demo-profile-card__hero">
             <span className="demo-profile-card__avatar">{(profileDraft.name || profileDraft.account || "D").slice(0, 1).toUpperCase()}</span>
             <span className="demo-profile-card__identity">
-              <strong>{profileDraft.name || "Demo Operator"}</strong>
-              <span>{profileDraft.role || "Operations"}</span>
+              <strong>{profileDraft.name || "Store Admin"}</strong>
+              <span>{profileDraft.role || "Commerce Ops"}</span>
             </span>
           </div>
           <div className="demo-profile-card__form">
@@ -202,11 +204,11 @@ export function App() {
   }, [pushLog]);
 
   if (initError) {
-    return <div style={{ padding: 24 }}>Failed to initialize demo: {initError.message}</div>;
+    return <div style={{ padding: 24 }}>Failed to initialize commerce demo: {initError.message}</div>;
   }
 
   if (!client) {
-    return <div style={{ padding: 24 }}>Loading desktop foundation demo...</div>;
+    return <div style={{ padding: 24 }}>Loading commerce desktop demo...</div>;
   }
 
   return (
@@ -222,14 +224,14 @@ export function App() {
         checkingFallback={<LoadingBlock rows={4} />}
         fallback={
           <DesktopLoginPage
-            brand={{ name: "Foundation Demo" }}
-            title="登录桌面 DEMO"
+            brand={{ name: appBrand }}
+            title="商城运营登录"
             variant={template.loginVariant}
-            subtitle="账号和密码任意填写，用来演示 app-shell 的登录与 session 流程。"
-            visualTitle="Desktop-first foundation."
-            visualDescription="Tauri 环境走 Rust core，本地文件、通知、窗口和安全存储由底座统一接管。"
-            submitLabel="进入 DEMO"
-            login={{ login: loginDemoUser, defaultPayload: { account: "demo", password: "demo", remember: true } }}
+            subtitle="输入任意账号密码即可进入，用来演示商城后台的登录、会话和桌面能力接入。"
+            visualTitle="Commerce operations, on desktop."
+            visualDescription="订单、库存、报表和更新中心跑在同一个桌面底座里，业务只维护自己的页面和数据。"
+            submitLabel="进入工作台"
+            login={{ login: loginDemoUser, defaultPayload: { account: "store-admin", password: "demo", remember: true } }}
           />
         }
       >

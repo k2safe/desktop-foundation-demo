@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Badge, Button, CodeBlock, EditableTable, SettingsPage, type EditableTableColumn } from "@desktop-foundation/ui-react";
 import type { AppUpdateState, DesktopClient } from "@desktop-foundation/bridge";
+import { getDemoUpdateSource } from "../client";
 
 interface RuntimeFlag {
   id: string;
@@ -77,6 +78,7 @@ function UpdateCenter({ client }: { client: DesktopClient }) {
   const [state, setState] = useState<AppUpdateState>(() => client.updates.getState());
   const [busyAction, setBusyAction] = useState<"check" | "download" | "install" | "page" | null>(null);
   const [message, setMessage] = useState("等待检查更新");
+  const updateSource = getDemoUpdateSource();
 
   function refresh(nextMessage?: string) {
     const nextState = client.updates.getState();
@@ -117,11 +119,22 @@ function UpdateCenter({ client }: { client: DesktopClient }) {
     <div className="demo-update-center">
       <div className="demo-update-center__hero">
         <div>
-          <div className="demo-update-center__eyebrow">Release channel</div>
-          <h3>{update?.channel ?? "stable"}</h3>
+          <div className="demo-update-center__eyebrow">Update source</div>
+          <h3>{updateSource.mode === "github" ? "GitHub Releases" : updateSource.mode === "custom" ? "Custom Manifest" : "Local Fixture"}</h3>
           <p>{visibleMessage}</p>
         </div>
         <Badge tone={statusTone(state.status)}>{statusText(state.status)}</Badge>
+      </div>
+
+      <div className="demo-update-center__source">
+        <div>
+          <span>Manifest</span>
+          <strong>{updateSource.manifestUrl}</strong>
+        </div>
+        <div>
+          <span>{updateSource.repository ? "Repository" : "Release page"}</span>
+          <strong>{updateSource.repository ?? update?.releasePageUrl ?? updateSource.releasePageUrl ?? "等待 manifest"}</strong>
+        </div>
       </div>
 
       <div className="demo-update-center__stats">
@@ -209,7 +222,7 @@ function UpdateCenter({ client }: { client: DesktopClient }) {
 export function Settings({ client, logs }: SettingsProps) {
   const [activeSectionId, setActiveSectionId] = useState("runtime");
   const [flags, setFlags] = useState<RuntimeFlag[]>([
-    { id: "api", name: "apiBaseURL", value: "https://api.foundation-demo.local", scope: "app" },
+    { id: "api", name: "apiBaseURL", value: "https://api.commerce-demo.local", scope: "app" },
     { id: "token", name: "refreshToken", value: "secure-storage", scope: "secure" },
     { id: "density", name: "tableDensity", value: "default", scope: "user" }
   ]);
@@ -238,7 +251,7 @@ export function Settings({ client, logs }: SettingsProps) {
         {
           id: "updates",
           title: "更新中心",
-          description: "客户端只调用 client.updates，真实项目可替换为 GitHub Releases manifest 或 Tauri updater。",
+          description: "客户端只调用 client.updates，商城项目可替换为 GitHub Releases manifest 或 Tauri updater。",
           content: <UpdateCenter client={client} />
         },
         {

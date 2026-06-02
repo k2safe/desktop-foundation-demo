@@ -540,9 +540,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "desktop-commerce-demo"
+version = "0.1.0"
+dependencies = [
+ "desktop-core-rs",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+]
+
+[[package]]
 name = "desktop-core-rs"
 version = "0.1.0"
-source = "git+ssh://git@github.com/k2safe/desktop-foundation.git?rev=85ced0e528547e812b75c95a02aff68a0117b1d4#85ced0e528547e812b75c95a02aff68a0117b1d4"
+source = "git+ssh://git@github.com/k2safe/desktop-foundation.git?rev=aad418c4f7b5adad961123c7bcda52b87e213bb6#aad418c4f7b5adad961123c7bcda52b87e213bb6"
 dependencies = [
  "base64 0.22.1",
  "dirs",
@@ -551,17 +562,6 @@ dependencies = [
  "sha2",
  "tauri",
  "tauri-plugin",
-]
-
-[[package]]
-name = "desktop-foundation-demo"
-version = "0.1.0"
-dependencies = [
- "desktop-core-rs",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
 ]
 
 [[package]]

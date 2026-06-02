@@ -1,3 +1,3 @@
 fn main() {
-    desktop_foundation_demo_lib::run();
+    desktop_commerce_demo_lib::run();
 }

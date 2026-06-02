@@ -1,5 +1,7 @@
 import {
   createDesktopClient,
+  createGitHubReleaseManifestUrl,
+  createGitHubReleasePageUrl,
   createTauriDesktopCapability,
   createTauriFileCapability,
   createTauriKeyValueStore,
@@ -19,9 +21,10 @@ import {
 import { invoke } from "@tauri-apps/api/core";
 import { demoUser, orders, type DemoUser } from "./data";
 
-const product = "demo-product";
+const product = "commerce-ops";
 const demoVersion = (import.meta.env.VITE_APP_VERSION as string | undefined)?.trim() || "0.1.0";
-const apiBaseURL = "https://api.foundation-demo.local";
+const apiBaseURL = "https://api.commerce-demo.local";
+const defaultGitHubUpdateRepository = "k2safe/desktop-foundation-demo";
 
 function isTauriRuntime() {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
@@ -110,7 +113,7 @@ function demoFileCapability(pushLog: (value: string) => void): FileCapability {
   return {
     async openFileDialog() {
       pushLog("openFileDialog");
-      return { paths: ["/tmp/foundation-demo.csv"], canceled: false };
+      return { paths: ["/tmp/commerce-orders.csv"], canceled: false };
     },
     async saveFileDialog() {
       pushLog("saveFileDialog");
@@ -139,12 +142,30 @@ function envValue(name: string) {
   return (import.meta.env[name] as string | undefined)?.trim();
 }
 
+function updateSourceMode() {
+  if (envValue("VITE_UPDATE_MANIFEST_URL")) return "custom";
+  if (envValue("VITE_UPDATE_SOURCE") === "github" || envValue("VITE_UPDATE_GITHUB_REPO")) return "github";
+  return "local";
+}
+
+function githubUpdateConfig() {
+  return {
+    repository: envValue("VITE_UPDATE_GITHUB_REPO") || defaultGitHubUpdateRepository,
+    githubHost: envValue("VITE_UPDATE_GITHUB_HOST"),
+    tag: envValue("VITE_UPDATE_TAG"),
+    manifestFileName: envValue("VITE_UPDATE_MANIFEST_FILE") || "latest.json"
+  };
+}
+
 function updateManifestUrl() {
-  return envValue("VITE_UPDATE_MANIFEST_URL") || new URL("./updates/latest.json", window.location.href).toString();
+  const explicitManifestUrl = envValue("VITE_UPDATE_MANIFEST_URL");
+  if (explicitManifestUrl) return explicitManifestUrl;
+  if (updateSourceMode() === "github") return createGitHubReleaseManifestUrl(githubUpdateConfig());
+  return new URL("./updates/latest.json", window.location.href).toString();
 }
 
 function isLocalUpdateFixture() {
-  return !envValue("VITE_UPDATE_MANIFEST_URL");
+  return updateSourceMode() === "local";
 }
 
 function shouldVerifyUpdateChecksum() {
@@ -163,10 +184,22 @@ function demoUpdateConfig(): AppUpdateConfig {
     requireChecksumVerification: shouldVerifyUpdateChecksum(),
     installUpdate: async ({ update, downloadedPath }) => ({
       status: "installable",
-      message: `更新包 ${update.version} 已下载并校验完成；真实项目接入 Tauri updater 或产品安装器后即可执行替换。`,
+        message: `更新包 ${update.version} 已下载并校验完成；真实项目接入 Tauri updater 或产品安装器后即可执行替换。`,
       path: downloadedPath,
       relaunchRequired: true
     })
+  };
+}
+
+export function getDemoUpdateSource() {
+  const mode = updateSourceMode();
+  const githubConfig = githubUpdateConfig();
+  return {
+    mode,
+    manifestUrl: updateManifestUrl(),
+    repository: mode === "github" ? githubConfig.repository : undefined,
+    releasePageUrl: mode === "github" ? createGitHubReleasePageUrl(githubConfig) : undefined,
+    localFixture: isLocalUpdateFixture()
   };
 }
 
@@ -200,7 +233,7 @@ export async function createDemoProductClient(pushLog: (value: string) => void):
       version: demoVersion,
       updateConfig: demoUpdateConfig(),
       security: {
-        allowedRequestOrigins: ["api.foundation-demo.local", "localhost", "127.0.0.1", "github.com", "raw.githubusercontent.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"],
+        allowedRequestOrigins: ["api.commerce-demo.local", "localhost", "127.0.0.1", "github.com", "raw.githubusercontent.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"],
         allowedExternalOrigins: ["github.com", "docs.example.com"],
         allowedExternalSchemes: ["https"],
         allowedDownloadDirectories: ["/tmp"]
@@ -223,7 +256,7 @@ export async function createDemoProductClient(pushLog: (value: string) => void):
     version: demoVersion,
     updateConfig: demoUpdateConfig(),
     security: {
-      allowedRequestOrigins: ["api.foundation-demo.local", "localhost", "127.0.0.1", "github.com", "raw.githubusercontent.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"],
+        allowedRequestOrigins: ["api.commerce-demo.local", "localhost", "127.0.0.1", "github.com", "raw.githubusercontent.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"],
       allowedExternalOrigins: ["github.com", "docs.example.com"],
       allowedExternalSchemes: ["https"],
       allowedDownloadDirectories: ["/tmp"]

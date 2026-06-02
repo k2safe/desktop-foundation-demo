@@ -19,8 +19,8 @@ export interface DemoProductTemplate {
 
 export function createDemoProductTemplate(templateId: ThemeTemplateId = defaultThemeTemplateId): DemoProductTemplate {
   const runtime = createThemeTemplateRuntime(templateId, {
-    id: "demo-product",
-    brand: { name: "Foundation Demo" },
+    id: "commerce-ops",
+    brand: { name: "Commerce Ops" },
     colors: {
       danger: "#ef4444"
     }

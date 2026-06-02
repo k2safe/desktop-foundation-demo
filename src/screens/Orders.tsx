@@ -15,7 +15,7 @@ export function Orders({ client }: OrdersProps) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [selectedRow, setSelectedRow] = useState<OrderRow | null>(null);
   const { visibleColumns, sort, density, setSort, setDensity } = useTablePreferences({
-    key: "demo-product:orders-table",
+    key: "commerce-ops:orders-table",
     columns: orderColumns,
     defaultSort: { key: "createdAt", direction: "desc" }
   });
@@ -37,8 +37,8 @@ export function Orders({ client }: OrdersProps) {
   return (
     <>
       <DataTable
-        title="订单中心"
-        description="产品项目只负责业务字段和交互，表格能力来自底座组件。"
+        title="商城订单"
+        description="商城项目只负责订单字段和交互，表格、筛选和偏好能力来自底座组件。"
         columns={visibleColumns}
         rows={filteredOrders}
         rowKey="id"
@@ -52,8 +52,8 @@ export function Orders({ client }: OrdersProps) {
         onRowClick={(row) => setSelectedRow(row)}
         filters={
           <>
-            <SearchInput value={keyword} placeholder="搜索订单号" onChange={(event) => setKeyword(event.target.value)} />
-            <Input value={merchant} placeholder="商户名称" onChange={(event) => setMerchant(event.target.value)} />
+            <SearchInput value={keyword} placeholder="搜索订单号 / 店铺" onChange={(event) => setKeyword(event.target.value)} />
+            <Input value={merchant} placeholder="店铺名称" onChange={(event) => setMerchant(event.target.value)} />
             <Select
               value={status}
               placeholder="状态"
@@ -97,7 +97,7 @@ export function Orders({ client }: OrdersProps) {
         title={selectedRow?.merchant ?? ""}
         subtitle={selectedRow?.id}
         rows={[
-          { label: "渠道", value: selectedRow?.channel },
+          { label: "来源", value: selectedRow?.channel },
           { label: "状态", value: selectedRow ? <StatusTag status={selectedRow.status} /> : null },
           { label: "金额", value: selectedRow ? `$${selectedRow.amount.toFixed(2)} ${selectedRow.currency}` : null },
           { label: "创建时间", value: selectedRow?.createdAt }

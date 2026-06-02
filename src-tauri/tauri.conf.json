@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Desktop Foundation Demo",
+  "productName": "Desktop Commerce Demo",
   "version": "0.1.0",
-  "identifier": "com.k2safe.desktopfoundation.demo",
+  "identifier": "com.k2safe.desktopcommerce.demo",
   "build": {
     "beforeDevCommand": "pnpm dev:web",
     "devUrl": "http://127.0.0.1:5174",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Desktop Foundation Demo",
+        "title": "Desktop Commerce Demo",
         "width": 1280,
         "height": 820,
         "minWidth": 1024,

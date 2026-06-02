@@ -10,7 +10,7 @@ pub fn run() {
     install_panic_logger();
 
     let core = DesktopCore::persistent_platform_with_http_adapter(
-        "demo-product",
+        "commerce-ops",
         Arc::new(CurlHttpAdapter),
     )
     .expect("failed to initialize desktop core");
@@ -19,7 +19,7 @@ pub fn run() {
         .manage(core)
         .plugin(desktop_core_plugin())
         .build(tauri::generate_context!())
-        .expect("failed to build Desktop Foundation Demo");
+        .expect("failed to build Desktop Commerce Demo");
 
     app.run(|app_handle, event| match event {
         tauri::RunEvent::Ready => show_main_window(app_handle),
@@ -51,7 +51,7 @@ fn install_panic_logger() {
         if let Ok(mut file) = std::fs::OpenOptions::new()
             .create(true)
             .append(true)
-            .open("/tmp/desktop-foundation-demo-panic.log")
+            .open("/tmp/desktop-commerce-demo-panic.log")
         {
             let _ = writeln!(file, "{info}");
         }

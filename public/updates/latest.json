@@ -1,25 +1,25 @@
 {
   "version": "0.1.1",
   "channel": "stable",
-  "notes": "Remote manifest demo release. Built locally without GitHub Actions; upload the same assets from release-plan.json to GitHub Releases when ready.",
+  "notes": "Desktop Commerce Demo local fixture release. Upload the same assets from release-plan.json to GitHub Releases when ready.",
   "pubDate": "2026-06-02T06:55:40.814Z",
   "releasePageUrl": "https://github.com/k2safe/desktop-foundation-demo/releases/tag/v0.1.1",
-  "downloadUrl": "./desktop-foundation-demo-0.1.1-macos.zip",
-  "sha256": "c81bee933806a424b054111fe2a4e198292dcd0a5d62dbd335b89f8b27509859",
-  "size": 3550303,
+  "downloadUrl": "./desktop-commerce-demo-0.1.1-macos.zip",
+  "sha256": "9e0618ed5430e5bc3c4f2183ae4867d3d5f189c62bfeecb82cbe186f11de2f0a",
+  "size": 7133812,
   "metadata": {
-    "productName": "Desktop Foundation Demo",
-    "artifactName": "desktop-foundation-demo-0.1.1-macos.zip",
+    "productName": "Desktop Commerce Demo",
+    "artifactName": "desktop-commerce-demo-0.1.1-macos.zip",
     "platform": "macos",
-    "sizeBytes": 3550303,
-    "sha256": "c81bee933806a424b054111fe2a4e198292dcd0a5d62dbd335b89f8b27509859",
-    "checksumFileName": "desktop-foundation-demo-0.1.1-macos.zip.sha256",
+    "sizeBytes": 7133812,
+    "sha256": "9e0618ed5430e5bc3c4f2183ae4867d3d5f189c62bfeecb82cbe186f11de2f0a",
+    "checksumFileName": "desktop-commerce-demo-0.1.1-macos.zip.sha256",
     "signing": {
       "macosIdentity": "-",
       "notarization": "not-configured"
     },
     "generatedBy": "desktop-foundation-ci",
     "hostedAs": "git-raw-demo",
-    "releasePlan": "artifacts/release-v0.1.1/release-plan.json"
+    "releasePlan": "artifacts/desktop/release-plan.json"
   }
 }
