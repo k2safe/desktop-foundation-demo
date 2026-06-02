@@ -1,21 +1,35 @@
 import "@desktop-foundation/ui-react/styles.css";
 import { useEffect, useMemo, useState } from "react";
 import { AuthGuard, DebugPanel, DesktopAppShell, DesktopLoginPage, useSession } from "@desktop-foundation/app-shell";
-import { Badge, Button, CommandPalette, DesktopLayout, LoadingBlock, SearchInput, type CommandPaletteItem, type DesktopMenuItem } from "@desktop-foundation/ui-react";
+import {
+  Badge,
+  Button,
+  CommandPalette,
+  DesktopLayout,
+  LoadingBlock,
+  SearchInput,
+  Select,
+  type CommandPaletteItem,
+  type DesktopLayoutVariant,
+  type DesktopMenuItem
+} from "@desktop-foundation/ui-react";
 import type { DesktopClient } from "@desktop-foundation/bridge";
 import { createDemoProductClient, loginDemoUser } from "./client";
 import { createMenus, demoUser, type DemoScreen } from "./data";
 import { Dashboard } from "./screens/Dashboard";
 import { Orders } from "./screens/Orders";
 import { Settings } from "./screens/Settings";
-import { demoProductTheme } from "./theme";
+import { createDemoProductTemplate, defaultThemeTemplateId, themeTemplateOptions, type ThemeTemplateId } from "./theme";
 
 interface ProductWorkspaceProps {
   client: DesktopClient;
   logs: string[];
+  themeTemplateId: ThemeTemplateId;
+  layoutVariant: DesktopLayoutVariant;
+  onThemeTemplateChange: (templateId: ThemeTemplateId) => void;
 }
 
-function ProductWorkspace({ client, logs }: ProductWorkspaceProps) {
+function ProductWorkspace({ client, logs, themeTemplateId, layoutVariant, onThemeTemplateChange }: ProductWorkspaceProps) {
   const session = useSession();
   const [screen, setScreen] = useState<DemoScreen>("dashboard");
   const [debugOpen, setDebugOpen] = useState(false);
@@ -46,6 +60,7 @@ function ProductWorkspace({ client, logs }: ProductWorkspaceProps) {
   return (
     <>
       <DesktopLayout
+        variant={layoutVariant}
         brand={{ name: "Foundation Demo" }}
         menus={createMenus(screen)}
         user={{ name: session.user?.name ?? demoUser.name, role: session.user?.role ?? demoUser.role }}
@@ -53,6 +68,13 @@ function ProductWorkspace({ client, logs }: ProductWorkspaceProps) {
         topbarRight={
           <>
             <Badge tone="success">Desktop</Badge>
+            <Select
+              value={themeTemplateId}
+              fullWidth={false}
+              aria-label="皮肤模板"
+              options={themeTemplateOptions}
+              onChange={(event) => onThemeTemplateChange(event.target.value as ThemeTemplateId)}
+            />
             <Button variant="outline" size="sm" onClick={() => setPaletteOpen(true)}>
               命令
             </Button>
@@ -87,6 +109,8 @@ export function App() {
   const [logs, setLogs] = useState<string[]>([]);
   const [client, setClient] = useState<DesktopClient | null>(null);
   const [initError, setInitError] = useState<Error | null>(null);
+  const [themeTemplateId, setThemeTemplateId] = useState<ThemeTemplateId>(defaultThemeTemplateId);
+  const template = useMemo(() => createDemoProductTemplate(themeTemplateId), [themeTemplateId]);
 
   const pushLog = useMemo(
     () => (value: string) => {
@@ -119,7 +143,8 @@ export function App() {
 
   return (
     <DesktopAppShell
-      theme={demoProductTheme}
+      theme={template.theme}
+      className={template.className}
       client={client}
       session={{
         loadUser: async () => demoUser
@@ -131,6 +156,7 @@ export function App() {
           <DesktopLoginPage
             brand={{ name: "Foundation Demo" }}
             title="登录桌面 DEMO"
+            variant={template.loginVariant}
             subtitle="账号和密码任意填写，用来演示 app-shell 的登录与 session 流程。"
             visualTitle="Desktop-first foundation."
             visualDescription="Tauri 环境走 Rust core，本地文件、通知、窗口和安全存储由底座统一接管。"
@@ -139,7 +165,13 @@ export function App() {
           />
         }
       >
-        <ProductWorkspace client={client} logs={logs} />
+        <ProductWorkspace
+          client={client}
+          logs={logs}
+          themeTemplateId={themeTemplateId}
+          layoutVariant={template.layoutVariant}
+          onThemeTemplateChange={setThemeTemplateId}
+        />
       </AuthGuard>
     </DesktopAppShell>
   );
