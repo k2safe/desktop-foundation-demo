@@ -67,3 +67,89 @@
 .demo-profile-card__form .df-input-wrap {
   min-height: 40px;
 }
+
+
+.demo-update-center {
+  display: grid;
+  gap: 16px;
+}
+
+.demo-update-center__hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--df-color-primary), transparent 82%);
+  border-radius: 18px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--df-color-primary-soft), white 12%), color-mix(in srgb, var(--df-color-surface), var(--df-color-bg) 16%));
+}
+
+.demo-update-center__eyebrow,
+.demo-update-stat span,
+.demo-update-center__manifest-title {
+  color: var(--df-color-text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.demo-update-center__hero h3 {
+  margin: 4px 0 2px;
+  color: var(--df-color-text);
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.demo-update-center__hero p {
+  margin: 0;
+  color: var(--df-color-text-muted);
+}
+
+.demo-update-center__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 12px;
+}
+
+.demo-update-stat {
+  display: grid;
+  gap: 8px;
+  min-height: 82px;
+  padding: 14px;
+  border: 1px solid var(--df-color-border);
+  border-radius: 14px;
+  background: var(--df-color-surface);
+}
+
+.demo-update-stat strong {
+  overflow: hidden;
+  color: var(--df-color-text);
+  font-size: 15px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.demo-update-center__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.demo-update-center__manifest {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+}
+
+.demo-update-center__manifest .df-code-block {
+  max-height: 300px;
+  overflow: auto;
+}
+
+@media (max-width: 860px) {
+  .demo-update-center__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

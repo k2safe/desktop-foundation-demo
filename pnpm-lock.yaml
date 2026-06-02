@@ -9,6 +9,7 @@ overrides:
   '@desktop-foundation/bridge': link:../desktop-foundation/packages/desktop-bridge
   '@desktop-foundation/theme-presets': link:../desktop-foundation/packages/theme-presets
   '@desktop-foundation/ui-react': link:../desktop-foundation/packages/desktop-ui-react
+  '@desktop-foundation/create-desktop-app': link:../desktop-foundation/packages/create-desktop-app
 
 importers:
 
@@ -45,6 +46,9 @@ importers:
         specifier: ^7.1.0
         version: 7.3.3
     devDependencies:
+      '@desktop-foundation/create-desktop-app':
+        specifier: link:../desktop-foundation/packages/create-desktop-app
+        version: link:../desktop-foundation/packages/create-desktop-app
       '@tauri-apps/cli':
         specifier: ^2.0.0
         version: 2.11.2
