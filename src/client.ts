@@ -6,6 +6,7 @@ import {
   createTauriSecureStorage,
   createTauriSessionStore,
   createWebFileCapability,
+  type AppUpdateConfig,
   type AsyncKeyValueStore,
   type DesktopCapability,
   type DesktopClient,
@@ -154,12 +155,18 @@ function shouldUseWebUpdateDownloads() {
   return isLocalUpdateFixture() || envValue("VITE_UPDATE_DOWNLOAD_MODE") === "web";
 }
 
-function demoUpdateConfig() {
+function demoUpdateConfig(): AppUpdateConfig {
   return {
     currentVersion: demoVersion,
     manifestUrl: updateManifestUrl(),
     channel: envValue("VITE_UPDATE_CHANNEL") || "stable",
-    requireChecksumVerification: shouldVerifyUpdateChecksum()
+    requireChecksumVerification: shouldVerifyUpdateChecksum(),
+    installUpdate: async ({ update, downloadedPath }) => ({
+      status: "installable",
+      message: `更新包 ${update.version} 已下载并校验完成；真实项目接入 Tauri updater 或产品安装器后即可执行替换。`,
+      path: downloadedPath,
+      relaunchRequired: true
+    })
   };
 }
 

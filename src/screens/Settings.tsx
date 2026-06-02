@@ -32,14 +32,45 @@ export interface SettingsProps {
 }
 
 function statusTone(status: AppUpdateState["status"]) {
-  if (status === "available" || status === "downloaded") return "success";
-  if (status === "checking" || status === "downloading") return "info";
+  if (status === "available" || status === "downloaded" || status === "installable" || status === "installed") return "success";
+  if (status === "checking" || status === "downloading" || status === "installing") return "info";
   if (status === "error") return "danger";
   return "neutral";
 }
 
+function statusText(status: AppUpdateState["status"]) {
+  const map: Record<AppUpdateState["status"], string> = {
+    idle: "待检查",
+    checking: "检查中",
+    available: "可更新",
+    "not-available": "已最新",
+    downloading: "下载中",
+    downloaded: "已下载",
+    installable: "可安装",
+    installing: "安装中",
+    installed: "已安装",
+    error: "异常"
+  };
+  return map[status];
+}
+
 function formatCheckedAt(value?: number) {
   return value ? new Date(value).toLocaleTimeString() : "尚未检查";
+}
+
+function formatDate(value?: string) {
+  return value ? new Date(value).toLocaleString() : "-";
+}
+
+function formatBytes(value?: number) {
+  if (!value) return "-";
+  if (value < 1024 * 1024) return Math.round(value / 1024) + " KB";
+  return (value / 1024 / 1024).toFixed(2) + " MB";
+}
+
+function shortValue(value?: string) {
+  if (!value) return "-";
+  return value.length > 18 ? value.slice(0, 10) + "..." + value.slice(-6) : value;
 }
 
 function UpdateCenter({ client }: { client: DesktopClient }) {
@@ -48,8 +79,11 @@ function UpdateCenter({ client }: { client: DesktopClient }) {
   const [message, setMessage] = useState("等待检查更新");
 
   function refresh(nextMessage?: string) {
-    setState(client.updates.getState());
+    const nextState = client.updates.getState();
+    setState(nextState);
     if (nextMessage) setMessage(nextMessage);
+    else if (nextState.installMessage) setMessage(nextState.installMessage);
+    else if (nextState.error) setMessage(nextState.error);
   }
 
   async function run(action: typeof busyAction, task: () => Promise<void>) {
@@ -66,6 +100,18 @@ function UpdateCenter({ client }: { client: DesktopClient }) {
   }
 
   const update = state.update;
+  const visibleMessage = state.error ?? state.installMessage ?? message;
+  const manifestPreview = update
+    ? {
+        ...update,
+        status: state.status,
+        downloadedPath: state.downloadedPath,
+        downloadedBytes: state.downloadedBytes,
+        downloadedSha256: state.downloadedSha256,
+        installMessage: state.installMessage,
+        installedAt: state.installedAt
+      }
+    : client.updates.getState();
 
   return (
     <div className="demo-update-center">
@@ -73,9 +119,9 @@ function UpdateCenter({ client }: { client: DesktopClient }) {
         <div>
           <div className="demo-update-center__eyebrow">Release channel</div>
           <h3>{update?.channel ?? "stable"}</h3>
-          <p>{message}</p>
+          <p>{visibleMessage}</p>
         </div>
-        <Badge tone={statusTone(state.status)}>{state.status}</Badge>
+        <Badge tone={statusTone(state.status)}>{statusText(state.status)}</Badge>
       </div>
 
       <div className="demo-update-center__stats">
@@ -88,17 +134,25 @@ function UpdateCenter({ client }: { client: DesktopClient }) {
           <strong>{update?.version ?? "-"}</strong>
         </div>
         <div className="demo-update-stat">
+          <span>包大小</span>
+          <strong>{formatBytes(update?.size ?? state.downloadedBytes)}</strong>
+        </div>
+        <div className="demo-update-stat">
           <span>最近检查</span>
           <strong>{formatCheckedAt(state.checkedAt)}</strong>
         </div>
         <div className="demo-update-stat">
-          <span>下载路径</span>
-          <strong>{state.downloadedPath ?? "-"}</strong>
+          <span>发布时间</span>
+          <strong>{formatDate(update?.pubDate)}</strong>
+        </div>
+        <div className="demo-update-stat">
+          <span>Checksum</span>
+          <strong>{shortValue(state.downloadedSha256 ?? update?.sha256)}</strong>
         </div>
       </div>
 
       <div className="demo-update-center__actions">
-        <Button size="sm" onClick={() => run("check", async () => {
+        <Button size="sm" disabled={busyAction !== null} onClick={() => run("check", async () => {
           const result = await client.updates.checkForUpdate();
           refresh(result.available ? "发现新版本 " + result.update?.version : "当前已经是最新版本");
         })}>
@@ -107,10 +161,10 @@ function UpdateCenter({ client }: { client: DesktopClient }) {
         <Button
           size="sm"
           variant="outline"
-          disabled={!update || busyAction === "download"}
+          disabled={!update || busyAction !== null}
           onClick={() => run("download", async () => {
             const result = await client.updates.downloadUpdate(update);
-            refresh("已下载到 " + result.path);
+            refresh("已下载并校验：" + result.path);
           })}
         >
           {busyAction === "download" ? "下载中" : "下载更新"}
@@ -118,7 +172,7 @@ function UpdateCenter({ client }: { client: DesktopClient }) {
         <Button
           size="sm"
           variant="outline"
-          disabled={!update || busyAction === "page"}
+          disabled={!update || busyAction !== null}
           onClick={() => run("page", async () => {
             await client.updates.openUpdatePage(update);
             refresh("已打开发布页");
@@ -128,20 +182,25 @@ function UpdateCenter({ client }: { client: DesktopClient }) {
         </Button>
         <Button
           size="sm"
-          variant="ghost"
-          disabled={!update || busyAction === "install"}
+          variant="outline"
+          disabled={!update || !state.downloadedPath || busyAction !== null}
           onClick={() => run("install", async () => {
-            await client.updates.installUpdate(update);
-            refresh("安装请求已发送");
+            const result = await client.updates.installUpdate(update);
+            refresh(result?.message ?? "安装请求已发送");
           })}
         >
-          安装
+          {busyAction === "install" ? "处理中" : "安装准备"}
         </Button>
+      </div>
+
+      <div className="demo-update-center__download">
+        <span>下载路径</span>
+        <strong>{state.downloadedPath ?? "等待下载"}</strong>
       </div>
 
       <div className="demo-update-center__manifest">
         <div className="demo-update-center__manifest-title">Manifest Preview</div>
-        <CodeBlock>{JSON.stringify(update ?? client.updates.getState(), null, 2)}</CodeBlock>
+        <CodeBlock>{JSON.stringify(manifestPreview, null, 2)}</CodeBlock>
       </div>
     </div>
   );
