@@ -1,19 +1,25 @@
 {
   "version": "0.1.1",
   "channel": "stable",
-  "notes": "Local demo update fixture generated for the real manifest adapter. Replace this URL with GitHub Releases latest.json in product builds.",
-  "pubDate": "2026-06-02T00:00:00.000Z",
-  "releasePageUrl": "https://github.com/k2safe/desktop-foundation-demo/releases",
-  "downloadUrl": "./updates/desktop-foundation-demo-0.1.1-macos.zip",
-  "sha256": "c01c9ad9a198587e7eb58c5d5c792b0050dd8c20e8f5a74a84e66cb655a7b994",
-  "size": 158,
-  "mandatory": false,
+  "notes": "Remote manifest demo release. Built locally without GitHub Actions; upload the same assets from release-plan.json to GitHub Releases when ready.",
+  "pubDate": "2026-06-02T06:55:40.814Z",
+  "releasePageUrl": "https://github.com/k2safe/desktop-foundation-demo/releases/tag/v0.1.1",
+  "downloadUrl": "./desktop-foundation-demo-0.1.1-macos.zip",
+  "sha256": "c81bee933806a424b054111fe2a4e198292dcd0a5d62dbd335b89f8b27509859",
+  "size": 3550303,
   "metadata": {
     "productName": "Desktop Foundation Demo",
     "artifactName": "desktop-foundation-demo-0.1.1-macos.zip",
     "platform": "macos",
-    "sizeBytes": 158,
-    "sha256": "c01c9ad9a198587e7eb58c5d5c792b0050dd8c20e8f5a74a84e66cb655a7b994",
-    "generatedBy": "desktop-foundation-demo-local-fixture"
+    "sizeBytes": 3550303,
+    "sha256": "c81bee933806a424b054111fe2a4e198292dcd0a5d62dbd335b89f8b27509859",
+    "checksumFileName": "desktop-foundation-demo-0.1.1-macos.zip.sha256",
+    "signing": {
+      "macosIdentity": "-",
+      "notarization": "not-configured"
+    },
+    "generatedBy": "desktop-foundation-ci",
+    "hostedAs": "git-raw-demo",
+    "releasePlan": "artifacts/release-v0.1.1/release-plan.json"
   }
 }

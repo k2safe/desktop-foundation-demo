@@ -19,7 +19,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { demoUser, orders, type DemoUser } from "./data";
 
 const product = "demo-product";
-const demoVersion = "0.1.0";
+const demoVersion = (import.meta.env.VITE_APP_VERSION as string | undefined)?.trim() || "0.1.0";
 const apiBaseURL = "https://api.foundation-demo.local";
 
 function isTauriRuntime() {
