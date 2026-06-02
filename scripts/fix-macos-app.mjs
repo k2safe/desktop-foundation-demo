@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-const appName = "Desktop Foundation Demo.app";
+const appName = "Desktop Commerce Demo.app";
 const appPath = join(process.cwd(), "src-tauri", "target", "release", "bundle", "macos", appName);
 const plistPath = join(appPath, "Contents", "Info.plist");
 
