@@ -146,25 +146,33 @@ function isLocalUpdateFixture() {
   return !envValue("VITE_UPDATE_MANIFEST_URL");
 }
 
+function shouldVerifyUpdateChecksum() {
+  return isLocalUpdateFixture() || envValue("VITE_UPDATE_REQUIRE_CHECKSUM") === "1";
+}
+
+function shouldUseWebUpdateDownloads() {
+  return isLocalUpdateFixture() || envValue("VITE_UPDATE_DOWNLOAD_MODE") === "web";
+}
+
 function demoUpdateConfig() {
-  const localFixture = isLocalUpdateFixture();
   return {
     currentVersion: demoVersion,
     manifestUrl: updateManifestUrl(),
     channel: envValue("VITE_UPDATE_CHANNEL") || "stable",
-    requireChecksumVerification: localFixture
+    requireChecksumVerification: shouldVerifyUpdateChecksum()
   };
 }
 
-function isLocalUpdateUrl(url: string) {
-  return isLocalUpdateFixture() && (url.startsWith("./updates/") || url.startsWith("/updates/") || url.includes("/updates/"));
+function isUpdateDownloadUrl(url: string) {
+  if (isLocalUpdateFixture()) return url.startsWith("./updates/") || url.startsWith("/updates/") || url.includes("/updates/");
+  return shouldUseWebUpdateDownloads() && (url.startsWith("https://") || url.startsWith("http://"));
 }
 
-function withLocalUpdateDownloads(files: FileCapability): FileCapability {
+function withUpdateDownloads(files: FileCapability): FileCapability {
   const webFiles = createWebFileCapability();
   return {
     ...files,
-    downloadFile: (url, options) => (isLocalUpdateUrl(url) ? webFiles.downloadFile(url, options) : files.downloadFile(url, options))
+    downloadFile: (url, options) => (isUpdateDownloadUrl(url) ? webFiles.downloadFile(url, options) : files.downloadFile(url, options))
   };
 }
 
@@ -172,7 +180,7 @@ export async function createDemoProductClient(pushLog: (value: string) => void):
   if (isTauriRuntime()) {
     const session = await createTauriSessionStore(invoke, product);
     const desktop = createTauriDesktopCapability(invoke);
-    const files = withLocalUpdateDownloads(createTauriFileCapability(invoke, product));
+    const files = withUpdateDownloads(createTauriFileCapability(invoke, product));
     return createDesktopClient({
       product,
       apiBaseURL,
@@ -185,7 +193,7 @@ export async function createDemoProductClient(pushLog: (value: string) => void):
       version: demoVersion,
       updateConfig: demoUpdateConfig(),
       security: {
-        allowedRequestOrigins: ["api.foundation-demo.local", "localhost", "127.0.0.1", "github.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"],
+        allowedRequestOrigins: ["api.foundation-demo.local", "localhost", "127.0.0.1", "github.com", "raw.githubusercontent.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"],
         allowedExternalOrigins: ["github.com", "docs.example.com"],
         allowedExternalSchemes: ["https"],
         allowedDownloadDirectories: ["/tmp"]
@@ -194,7 +202,7 @@ export async function createDemoProductClient(pushLog: (value: string) => void):
   }
 
   const desktop = demoDesktopCapability(pushLog);
-  const files = withLocalUpdateDownloads(demoFileCapability(pushLog));
+  const files = withUpdateDownloads(demoFileCapability(pushLog));
 
   return createDesktopClient({
     product,
@@ -208,7 +216,7 @@ export async function createDemoProductClient(pushLog: (value: string) => void):
     version: demoVersion,
     updateConfig: demoUpdateConfig(),
     security: {
-      allowedRequestOrigins: ["api.foundation-demo.local", "localhost", "127.0.0.1", "github.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"],
+      allowedRequestOrigins: ["api.foundation-demo.local", "localhost", "127.0.0.1", "github.com", "raw.githubusercontent.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"],
       allowedExternalOrigins: ["github.com", "docs.example.com"],
       allowedExternalSchemes: ["https"],
       allowedDownloadDirectories: ["/tmp"]
