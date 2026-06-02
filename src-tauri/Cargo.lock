@@ -542,7 +542,7 @@ dependencies = [
 [[package]]
 name = "desktop-core-rs"
 version = "0.1.0"
-source = "git+ssh://git@github.com/k2safe/desktop-foundation.git?rev=ad44cbd41090a855ef83d3ae797393609b11a132#ad44cbd41090a855ef83d3ae797393609b11a132"
+source = "git+ssh://git@github.com/k2safe/desktop-foundation.git?rev=85ced0e528547e812b75c95a02aff68a0117b1d4#85ced0e528547e812b75c95a02aff68a0117b1d4"
 dependencies = [
  "base64 0.22.1",
  "dirs",
