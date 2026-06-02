@@ -28,13 +28,15 @@ The demo keeps business HTTP mocked so it does not need a backend. In Tauri runt
 - file dialog/export/download
 - session/storage/secure storage
 
-## Local Development Before Package Release
+## Foundation Consumption
 
-The dependencies use normal package versions, for example `@desktop-foundation/ui-react`: `0.1.0`.
+This repo consumes foundation as an external product project:
 
-For local development before publishing packages, `package.json` includes `pnpm.overrides` that link to a sibling checkout at `../desktop-foundation/packages/*`. The Tauri crate also uses a local path to `../desktop-foundation/packages/desktop-core-rs`.
+- JavaScript packages come from GitHub raw tarballs listed in `desktop-foundation/artifacts/npm/foundation-packages.json`.
+- `pnpm.overrides` pins transitive foundation package dependencies to the same tarball URLs.
+- `desktop-core-rs` comes from `git@github.com:k2safe/desktop-foundation.git` via SSH and is pinned to a foundation commit.
 
-After publishing the foundation packages/crate, remove the local overrides/path dependencies and install from the registry.
+When the foundation packages are published to npm or GitHub Packages, these URL specs can be replaced with normal semver ranges.
 
 ## Scripts
 

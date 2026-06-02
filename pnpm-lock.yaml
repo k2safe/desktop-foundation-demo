@@ -5,28 +5,28 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@desktop-foundation/app-shell': link:../desktop-foundation/packages/desktop-app-shell
-  '@desktop-foundation/bridge': link:../desktop-foundation/packages/desktop-bridge
-  '@desktop-foundation/theme-presets': link:../desktop-foundation/packages/theme-presets
-  '@desktop-foundation/ui-react': link:../desktop-foundation/packages/desktop-ui-react
-  '@desktop-foundation/create-desktop-app': link:../desktop-foundation/packages/create-desktop-app
+  '@desktop-foundation/app-shell': https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-app-shell-0.1.0.tgz
+  '@desktop-foundation/bridge': https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-bridge-0.1.0.tgz
+  '@desktop-foundation/theme-presets': https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-theme-presets-0.1.0.tgz
+  '@desktop-foundation/ui-react': https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-ui-react-0.1.0.tgz
+  '@desktop-foundation/create-desktop-app': https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-create-desktop-app-0.1.0.tgz
 
 importers:
 
   .:
     dependencies:
       '@desktop-foundation/app-shell':
-        specifier: link:../desktop-foundation/packages/desktop-app-shell
-        version: link:../desktop-foundation/packages/desktop-app-shell
+        specifier: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-app-shell-0.1.0.tgz
+        version: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-app-shell-0.1.0.tgz(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@desktop-foundation/bridge':
-        specifier: link:../desktop-foundation/packages/desktop-bridge
-        version: link:../desktop-foundation/packages/desktop-bridge
+        specifier: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-bridge-0.1.0.tgz
+        version: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-bridge-0.1.0.tgz
       '@desktop-foundation/theme-presets':
-        specifier: link:../desktop-foundation/packages/theme-presets
-        version: link:../desktop-foundation/packages/theme-presets
+        specifier: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-theme-presets-0.1.0.tgz
+        version: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-theme-presets-0.1.0.tgz(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@desktop-foundation/ui-react':
-        specifier: link:../desktop-foundation/packages/desktop-ui-react
-        version: link:../desktop-foundation/packages/desktop-ui-react
+        specifier: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-ui-react-0.1.0.tgz
+        version: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-ui-react-0.1.0.tgz(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@tauri-apps/api':
         specifier: ^2.0.0
         version: 2.11.0
@@ -47,8 +47,8 @@ importers:
         version: 7.3.3
     devDependencies:
       '@desktop-foundation/create-desktop-app':
-        specifier: link:../desktop-foundation/packages/create-desktop-app
-        version: link:../desktop-foundation/packages/create-desktop-app
+        specifier: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-create-desktop-app-0.1.0.tgz
+        version: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-create-desktop-app-0.1.0.tgz
       '@tauri-apps/cli':
         specifier: ^2.0.0
         version: 2.11.2
@@ -143,6 +143,33 @@ packages:
   '@babel/types@7.29.7':
     resolution: {integrity: sha512-4zBIxpPzowiZpusoFkyGVwakdRJUyuH5PxQ/PrqghfdFWWasvnCdPfQXHrenDai+gyLARulZjZowCOj6fjT4pA==}
     engines: {node: '>=6.9.0'}
+
+  '@desktop-foundation/app-shell@https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-app-shell-0.1.0.tgz':
+    resolution: {integrity: sha512-Xa+UTgYsO//ZY4mK/zNcjYnvb2xsE2kUqP97clMf6EGX3CK/k+B15gYLAm8lTXozFnlcXGZ9v3sGB/c8FF+yiQ==, tarball: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-app-shell-0.1.0.tgz}
+    version: 0.1.0
+    peerDependencies:
+      react: '>=18.2.0'
+      react-dom: '>=18.2.0'
+
+  '@desktop-foundation/bridge@https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-bridge-0.1.0.tgz':
+    resolution: {integrity: sha512-ByCKAjh4oTAC9CuzA+QmY3kuhXc640cfz8KzEJIduWP3swpN0Rhl9gJ2bwaQ4zwQ6Z9z96eyJYFwGHAXCDyIWQ==, tarball: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-bridge-0.1.0.tgz}
+    version: 0.1.0
+
+  '@desktop-foundation/create-desktop-app@https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-create-desktop-app-0.1.0.tgz':
+    resolution: {integrity: sha512-2/1KHgg0jRy7xqD0ue1+J85/4e+KIcy0SM0YeOlgWvTmzyVEMGs/Yfj8JFFavFJKlWerUH7c5/TVQejSwJ7Ezw==, tarball: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-create-desktop-app-0.1.0.tgz}
+    version: 0.1.0
+    hasBin: true
+
+  '@desktop-foundation/theme-presets@https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-theme-presets-0.1.0.tgz':
+    resolution: {integrity: sha512-LEFwOasH62vvG36zygXK1NwGFCYKNpUBN+EdwtdMfinblbrMsq1yWVp95ILp7y4MgLBgNABew+JQAZkhT1PDIQ==, tarball: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-theme-presets-0.1.0.tgz}
+    version: 0.1.0
+
+  '@desktop-foundation/ui-react@https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-ui-react-0.1.0.tgz':
+    resolution: {integrity: sha512-6zUzBkPzt3a3x79vSGHjheeAmWIkK57Ojfu7Ptxprr4+A5v+rLmNNpns4dMPggu/RA3+AKrl7XWChTiyBAVg9g==, tarball: https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-ui-react-0.1.0.tgz}
+    version: 0.1.0
+    peerDependencies:
+      react: '>=18.2.0'
+      react-dom: '>=18.2.0'
 
   '@esbuild/aix-ppc64@0.27.7':
     resolution: {integrity: sha512-EKX3Qwmhz1eMdEJokhALr0YiD0lhQNwDqkPYyPhiSwKrh7/4KRjQc04sZ8db+5DVVnZ1LmbNDI1uAMPEUBnQPg==}
@@ -862,6 +889,29 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
+
+  '@desktop-foundation/app-shell@https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-app-shell-0.1.0.tgz(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+    dependencies:
+      '@desktop-foundation/bridge': https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-bridge-0.1.0.tgz
+      '@desktop-foundation/ui-react': https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-ui-react-0.1.0.tgz(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
+
+  '@desktop-foundation/bridge@https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-bridge-0.1.0.tgz': {}
+
+  '@desktop-foundation/create-desktop-app@https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-create-desktop-app-0.1.0.tgz': {}
+
+  '@desktop-foundation/theme-presets@https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-theme-presets-0.1.0.tgz(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+    dependencies:
+      '@desktop-foundation/ui-react': https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-ui-react-0.1.0.tgz(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+    transitivePeerDependencies:
+      - react
+      - react-dom
+
+  '@desktop-foundation/ui-react@https://raw.githubusercontent.com/k2safe/desktop-foundation/main/artifacts/npm/desktop-foundation-ui-react-0.1.0.tgz(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+    dependencies:
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
 
   '@esbuild/aix-ppc64@0.27.7':
     optional: true
