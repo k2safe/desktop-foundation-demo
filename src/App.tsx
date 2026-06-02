@@ -1,4 +1,5 @@
 import "@desktop-foundation/ui-react/styles.css";
+import "./App.css";
 import { useEffect, useMemo, useState } from "react";
 import { AuthGuard, DebugPanel, DesktopAppShell, DesktopLoginPage, useSession } from "@desktop-foundation/app-shell";
 import {
@@ -6,7 +7,9 @@ import {
   Button,
   CommandPalette,
   DesktopLayout,
+  Input,
   LoadingBlock,
+  Modal,
   SearchInput,
   Select,
   type CommandPaletteItem,
@@ -15,7 +18,7 @@ import {
 } from "@desktop-foundation/ui-react";
 import type { DesktopClient } from "@desktop-foundation/bridge";
 import { createDemoProductClient, loginDemoUser } from "./client";
-import { createMenus, demoUser, type DemoScreen } from "./data";
+import { createMenus, demoUser, type DemoScreen, type DemoUser } from "./data";
 import { Dashboard } from "./screens/Dashboard";
 import { Orders } from "./screens/Orders";
 import { Settings } from "./screens/Settings";
@@ -30,11 +33,24 @@ interface ProductWorkspaceProps {
 }
 
 function ProductWorkspace({ client, logs, themeTemplateId, layoutVariant, onThemeTemplateChange }: ProductWorkspaceProps) {
-  const session = useSession();
+  const session = useSession<DemoUser>();
   const [screen, setScreen] = useState<DemoScreen>("dashboard");
   const [debugOpen, setDebugOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [paletteValue, setPaletteValue] = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [profile, setProfile] = useState({ name: demoUser.name, account: demoUser.account, role: demoUser.role });
+  const [profileDraft, setProfileDraft] = useState(profile);
+
+  useEffect(() => {
+    const nextProfile = {
+      name: session.user?.name ?? demoUser.name,
+      account: session.user?.account ?? demoUser.account,
+      role: session.user?.role ?? demoUser.role
+    };
+    setProfile(nextProfile);
+    setProfileDraft(nextProfile);
+  }, [session.user?.account, session.user?.name, session.user?.role]);
 
   const commands: CommandPaletteItem[] = [
     { id: "dashboard", label: "打开工作台", group: "导航" },
@@ -57,13 +73,23 @@ function ProductWorkspace({ client, logs, themeTemplateId, layoutVariant, onThem
     setPaletteOpen(false);
   }
 
+  function handleOpenProfile() {
+    setProfileDraft(profile);
+    setProfileOpen(true);
+  }
+
+  function handleSaveProfile() {
+    setProfile(profileDraft);
+    setProfileOpen(false);
+  }
+
   return (
     <>
       <DesktopLayout
         variant={layoutVariant}
         brand={{ name: "Foundation Demo" }}
         menus={createMenus(screen)}
-        user={{ name: session.user?.name ?? demoUser.name, role: session.user?.role ?? demoUser.role }}
+        user={{ name: profile.name, account: profile.account, role: profile.role }}
         topbarLeft={<SearchInput placeholder="全局搜索订单 / 商户 / 配置" />}
         topbarRight={
           <>
@@ -84,6 +110,7 @@ function ProductWorkspace({ client, logs, themeTemplateId, layoutVariant, onThem
           </>
         }
         onMenuSelect={handleMenuSelect}
+        onEditProfile={handleOpenProfile}
         onLogout={session.clearSession}
       >
         {screen === "dashboard" ? <Dashboard client={client} logs={logs} onOpenCommands={() => setPaletteOpen(true)} /> : null}
@@ -101,6 +128,47 @@ function ProductWorkspace({ client, logs, themeTemplateId, layoutVariant, onThem
         onClose={() => setPaletteOpen(false)}
       />
       <DebugPanel open={debugOpen} onClose={() => setDebugOpen(false)} appVersion="0.1.0" environment="desktop-demo" />
+      <Modal
+        open={profileOpen}
+        className="df-modal--compact demo-profile-modal"
+        title="个人信息"
+        onClose={() => setProfileOpen(false)}
+        footer={
+          <>
+            <Button variant="outline" onClick={() => setProfileOpen(false)}>
+              取消
+            </Button>
+            <Button onClick={handleSaveProfile}>保存</Button>
+          </>
+        }
+      >
+        <div className="demo-profile-card">
+          <div className="demo-profile-card__hero">
+            <span className="demo-profile-card__avatar">{(profileDraft.name || profileDraft.account || "D").slice(0, 1).toUpperCase()}</span>
+            <span className="demo-profile-card__identity">
+              <strong>{profileDraft.name || "Demo Operator"}</strong>
+              <span>{profileDraft.role || "Operations"}</span>
+            </span>
+          </div>
+          <div className="demo-profile-card__form">
+            <Input
+              label="姓名"
+              value={profileDraft.name}
+              onChange={(event) => setProfileDraft((current) => ({ ...current, name: event.target.value }))}
+            />
+            <Input
+              label="账号"
+              value={profileDraft.account}
+              onChange={(event) => setProfileDraft((current) => ({ ...current, account: event.target.value }))}
+            />
+            <Input
+              label="角色"
+              value={profileDraft.role}
+              onChange={(event) => setProfileDraft((current) => ({ ...current, role: event.target.value }))}
+            />
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }

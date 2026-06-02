@@ -16,13 +16,23 @@
         "width": 1280,
         "height": 820,
         "minWidth": 1024,
-        "minHeight": 680
+        "minHeight": 680,
+        "decorations": true,
+        "hiddenTitle": true,
+        "titleBarStyle": "Overlay",
+        "trafficLightPosition": {
+          "x": 18,
+          "y": 18
+        },
+        "backgroundColor": "#050314"
       }
     ]
   },
   "bundle": {
     "active": true,
-    "targets": ["app"],
+    "targets": [
+      "app"
+    ],
     "icon": [
       "icons/icon.icns",
       "icons/icon.png"
